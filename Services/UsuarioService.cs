@@ -6,6 +6,7 @@ using AutoMapper;
 using CRUD_Dapper.Dto;
 using CRUD_Dapper.Models;
 using Dapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CRUD_Dapper.Services
 {
@@ -107,6 +108,36 @@ namespace CRUD_Dapper.Services
         }
 
 
+        public async Task<ResponseModel<List<UsuarioListarDto>>> EditarUsuario(UsuarioEditarDto usuarioEditarDto)
+        {
+            // throw new NotImplementedException();
+
+            ResponseModel<List<UsuarioListarDto>> response = new ResponseModel<List<UsuarioListarDto>>();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                // var usuariosBanco = await connection.ExecuteAsync("update Usuarios set NomeCompleto = @NomeCompleto" + "Email = @Email, Cargo = @Cargo, Salario = @Salario, Situacao = @Situacao, CPF = @CPF where Id = @Id", usuarioEditarDto);
+                var usuariosBanco = await connection.ExecuteAsync("update Usuarios set NomeCompleto = @NomeCompleto, Email = @Email, Cargo = @Cargo, Salario = @Salario, Situacao = @Situacao, CPF = @CPF where Id = @Id", usuarioEditarDto);
+
+                if (usuariosBanco == 0)
+                {
+                    response.Mensagem = "Ocorreu um erro ao realizar a edição!";
+                    response.Status = false;
+                    return response;
+                }
+
+                var usuarios = await ListarUsuarios(connection);
+
+                var usuariosMapeados = _mapper.Map<List<UsuarioListarDto>>(usuarios);
+
+                response.Dados = usuariosMapeados;
+                response.Mensagem = "Usuários listados com sucesso!";
+
+            }
+
+            return response;
+
+        }
 
     }
 }

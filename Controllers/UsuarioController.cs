@@ -55,6 +55,16 @@ namespace CRUD_Dapper.Controllers
 
         }
 
+        [HttpPut]
+        public async Task<IActionResult> EditarUsuario(UsuarioEditarDto usuarioEditarDto)
+        {
+            var usuarios = await _usuarioInterface.EditarUsuario(usuarioEditarDto);
+            if (usuarios.Status == false)
+            {
+                return BadRequest(usuarios);
+            }
+            return Ok(usuarios);
+        }
 
 
     }
