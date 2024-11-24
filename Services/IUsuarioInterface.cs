@@ -17,5 +17,7 @@ namespace CRUD_Dapper.Services
 
         Task<ResponseModel<List<UsuarioListarDto>>> EditarUsuario(UsuarioEditarDto usuarioEditarDto);
 
+        Task<ResponseModel<List<UsuarioListarDto>>> RemoverUsuario(int usuarioId);
+
     }
 }

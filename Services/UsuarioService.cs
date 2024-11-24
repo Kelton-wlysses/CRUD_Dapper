@@ -139,5 +139,30 @@ namespace CRUD_Dapper.Services
 
         }
 
+
+        public async Task<ResponseModel<List<UsuarioListarDto>>> RemoverUsuario(int usuarioId)
+        {
+            ResponseModel<List<UsuarioListarDto>> response = new ResponseModel<List<UsuarioListarDto>>();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var usuariosBanco = await connection.ExecuteAsync("delete from Usuarios where id = @Id", new { Id = usuarioId });
+
+                if (usuariosBanco == 0)
+                {
+                    response.Mensagem = "Ocorreu um erro ao realizar a edição!";
+                    response.Status = false;
+                    return response;
+                }
+
+                var usuarios = await ListarUsuarios(connection);
+                var usuariosMapeados = _mapper.Map<List<UsuarioListarDto>>(usuarios);
+
+                response.Dados = usuariosMapeados;
+                response.Mensagem = "Usuário deletado com sucesso!";
+            }
+
+            return response;
+        }
     }
 }
